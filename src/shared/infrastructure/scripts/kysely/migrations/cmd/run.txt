@@ -1,0 +1,29 @@
+
+This help text provides:
+- ✅ Clear examples of how to use each command
+- ✅ Description of what each command does
+- ✅ Required environment variables
+- ✅ Important notes about database safety
+- ✅ Consistent formatting that matches commander.js help style
+
+Examples:
+  $ yarn db:migration up          Run all pending migrations
+  $ yarn db:migration down        Rollback the last migration
+  $ yarn db:migration list        List all migrations and their status
+  $ yarn db:migration pending     Show pending migrations
+
+Commands:
+  up        Apply all pending migrations to the database
+  down      Rollback the most recent migration
+  list      Display all migrations with their current status
+  pending   Show only migrations that haven't been applied yet
+
+Environment Variables:
+  POSTGRES_URL      Database connection string (required)
+  NODE_ENV          Environment (development, production)
+
+Notes:
+  - Make sure your database is running before executing migrations
+  - Always backup your database before running migrations in production
+  - Use 'list' to check migration status before running 'up' or 'down'
+

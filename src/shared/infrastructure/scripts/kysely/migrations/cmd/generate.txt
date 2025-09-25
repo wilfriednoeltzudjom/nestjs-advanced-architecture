@@ -1,0 +1,33 @@
+Migration Types:
+  empty         Create an empty migration file (name required)
+  create-table  Create a new table with specified name
+  add-column    Add a column to an existing table
+  create-index  Create an index on a table column
+
+Options:
+  --domain, -d  Domain name (required)
+  --type, -t    Migration type (default: empty)
+  --name, -n    Custom migration name (optional, except for empty type)
+
+Notes:
+  - Domain name determines the migration file location
+  - For 'empty' type, you must provide a custom name
+  - For other types, name is optional and will be auto-generated if not provided
+  - Migration files are created with timestamp prefix for ordering
+  - Use descriptive names to make migrations easier to understand
+
+Examples:
+  # Empty migration with custom name (name required for empty type)
+  $ yarn migration:generate --domain alarms --name "add user permissions"
+  
+  # Create table migration (name optional, will be auto-generated)
+  $ yarn migration:generate --domain alarms --type create-table users
+  $ yarn migration:generate --domain alarms --type create-table users --name "create users and profiles"
+  
+  # Add column migration
+  $ yarn migration:generate --domain alarms --type add-column users email
+  $ yarn migration:generate --domain alarms --type add-column users email --name "add email to users"
+  
+  # Create index migration
+  $ yarn migration:generate --domain alarms --type create-index users email
+  $ yarn migration:generate --domain alarms --type create-index users email --name "add email index"

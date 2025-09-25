@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: advanced-architecture-postgres
+    env_file:
+      - ../../.env
+    ports:
+      - 5432:5432
+    volumes:
+      - advanced_architecture_postgres_data:/var/lib/postgresql/data
+      - ../../src/shared/infrastructure/scripts/kysely/initdb.sh:/docker-entrypoint-initdb.d/initdb.sh
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DATABASE']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  migrations:
+    build:
+      context: ../../
+      dockerfile: local/docker/migrations/Dockerfile
+    container_name: advanced-architecture-migrations
+    env_file:
+      - ../../.env
+    environment:
+      - POSTGRES_HOST=postgres
+    restart: no
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  advanced_architecture_postgres_data:

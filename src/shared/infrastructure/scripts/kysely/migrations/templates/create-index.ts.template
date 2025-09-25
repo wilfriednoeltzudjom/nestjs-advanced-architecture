@@ -1,0 +1,15 @@
+import { Kysely } from 'kysely';
+
+export async function up(db: Kysely<any>): Promise<void> {
+  await db.schema
+    .createIndex('{{tableName}}_{{columnName}}_idx')
+    .on('{{tableName}}')
+    .column('{{columnName}}')
+    .execute();
+}
+
+export async function down(db: Kysely<any>): Promise<void> {
+  await db.schema
+    .dropIndex('{{tableName}}_{{columnName}}_idx')
+    .execute();
+}
