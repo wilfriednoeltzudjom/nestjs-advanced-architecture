@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 
 import { AlarmsService } from '@/alarms/application/alarms.service';
 import { CreateAlarmCommand } from '@/alarms/application/commands/create-alarm.command';
+import { GetAlarmsQuery } from '@/alarms/application/queries/get-alarms.query';
 import { CreateAlarmDto } from '@/alarms/presentation/http/dto/create-alarm.dto';
 
 @Controller('alarms')
@@ -17,7 +18,7 @@ export class AlarmsController {
 
   @Get()
   async findAll() {
-    const alarms = await this.alarmsService.findAll();
+    const alarms = await this.alarmsService.findAll(new GetAlarmsQuery());
 
     return alarms.map((alarm) => alarm.toPrimitives());
   }
