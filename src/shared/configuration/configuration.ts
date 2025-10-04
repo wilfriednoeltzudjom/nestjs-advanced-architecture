@@ -12,6 +12,7 @@ const configurationSchema = z.object({
   POSTGRES_DATABASE: z.string(),
   POSTGRES_USER: z.string(),
   POSTGRES_PASSWORD: z.string(),
+  MONGODB_URI: z.string(),
 });
 
 export function configuration() {
@@ -30,6 +31,9 @@ export function configuration() {
         host: variables.POSTGRES_HOST,
         user: variables.POSTGRES_USER,
         password: variables.POSTGRES_PASSWORD,
+      },
+      mongodb: {
+        uri: variables.MONGODB_URI,
       },
     },
   };

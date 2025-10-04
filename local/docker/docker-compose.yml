@@ -31,5 +31,24 @@ services:
       postgres:
         condition: service_healthy
 
+  mongodb:
+    image: mongo:8.0
+    container_name: advanced-architecture-mongodb
+    ports:
+      - '27017:27017'
+    env_file:
+      - ../../.env
+    volumes:
+      - advanced_architecture_mongodb_data:/data/db
+      - advanced_architecture_mongodb_config:/data/configdb
+    healthcheck:
+      test: ['CMD', 'mongosh', '--port', '27017', '--eval', "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
 volumes:
   advanced_architecture_postgres_data:
+  advanced_architecture_mongodb_data:
+  advanced_architecture_mongodb_config:
