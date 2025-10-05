@@ -5,6 +5,7 @@ import { CreateAlarmCommandHandler } from '@/alarms/application/commands/create-
 import { AlarmCreatedEventHandler } from '@/alarms/application/event-handlers/alarm-created.event-handler';
 import { GetAlarmsQueryHandler } from '@/alarms/application/queries/get-alarms.query-handler';
 import { AlarmFactory } from '@/alarms/domain/factories/alarm.factory';
+import { AlarmEntryFactory } from '@/alarms/domain/factories/alarm-entry.factory';
 import { AlarmsDatabaseModule } from '@/alarms/infrastructure/database/database.module';
 import { AlarmsController } from '@/alarms/presentation/http/controllers/alarms.controller';
 
@@ -16,6 +17,6 @@ const handlers = [...eventHandlers, ...commandHandlers, ...queryHandlers];
 @Module({
   imports: [AlarmsDatabaseModule],
   controllers: [AlarmsController],
-  providers: [AlarmFactory, AlarmsService, ...handlers],
+  providers: [AlarmFactory, AlarmEntryFactory, AlarmsService, ...handlers],
 })
 export class AlarmsModule {}

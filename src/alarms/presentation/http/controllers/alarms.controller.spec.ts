@@ -195,6 +195,9 @@ describe('Controller: AlarmsController', () => {
         id: existingAlarms[0].id.value,
         name: 'Critical Alert',
         severity: 'critical',
+        triggeredAt: existingAlarms[0].triggeredAt,
+        isAcknowledged: existingAlarms[0].isAcknowledged,
+        entries: existingAlarms[0].entries.map((entry) => entry.toPrimitives()),
         createdAt: existingAlarms[0].createdAt,
         updatedAt: existingAlarms[0].updatedAt,
       });
@@ -202,6 +205,9 @@ describe('Controller: AlarmsController', () => {
         id: existingAlarms[1].id.value,
         name: 'Low Priority Alert',
         severity: 'low',
+        triggeredAt: existingAlarms[1].triggeredAt,
+        isAcknowledged: existingAlarms[1].isAcknowledged,
+        entries: existingAlarms[1].entries.map((entry) => entry.toPrimitives()),
         createdAt: existingAlarms[1].createdAt,
         updatedAt: existingAlarms[1].updatedAt,
       });

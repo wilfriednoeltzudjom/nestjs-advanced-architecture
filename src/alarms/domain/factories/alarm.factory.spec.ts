@@ -1,9 +1,13 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
+import { AlarmEntry } from '@/alarms/domain/entities/alarm-entry.entity';
 import { AlarmFactory } from '@/alarms/domain/factories/alarm.factory';
+import { AlarmEntryId } from '@/alarms/domain/value-objects/alarm-entry-id.vo';
+import { AlarmEntryName } from '@/alarms/domain/value-objects/alarm-entry-name.vo';
+import { AlarmEntryType } from '@/alarms/domain/value-objects/alarm-entry-type.vo';
 import { AlarmName } from '@/alarms/domain/value-objects/alarm-name.vo';
 import { AlarmSeverity } from '@/alarms/domain/value-objects/alarm-severity.vo';
-import { globalMocks } from '@/shared/test/setup';
+import { commonFixtures, globalMocks } from '@/shared/test/setup';
 
 describe('Factory: AlarmFactory', () => {
   let alarmFactory: AlarmFactory;
@@ -28,6 +32,9 @@ describe('Factory: AlarmFactory', () => {
       expect(typeof alarm.id.value).toBe('string');
       expect(alarm.name).toBe(name);
       expect(alarm.severity).toBe(severity);
+      expect(alarm.triggeredAt).toBeInstanceOf(Date);
+      expect(alarm.isAcknowledged).toBe(false);
+      expect(alarm.entries).toEqual([]);
       expect(alarm.createdAt).toBeInstanceOf(Date);
       expect(alarm.updatedAt).toBeInstanceOf(Date);
       expect(alarm.createdAt).toEqual(alarm.updatedAt);
@@ -129,6 +136,121 @@ describe('Factory: AlarmFactory', () => {
       expect(typeof alarm.id.value).toBe('string');
       expect(alarm.createdAt).toBeInstanceOf(Date);
       expect(alarm.updatedAt).toBeInstanceOf(Date);
+    });
+
+    it('should create alarm with custom triggeredAt time', () => {
+      // Given: alarm properties with custom triggeredAt time
+      const name = AlarmName.from('Custom Trigger Time');
+      const severity = AlarmSeverity.from('high');
+      const customTriggerTime = new Date('2024-01-01T10:00:00.000Z');
+
+      // When: creating an alarm with custom triggeredAt
+      const alarm = alarmFactory.create({ name, severity, triggeredAt: customTriggerTime });
+
+      // Then: it should use the custom triggeredAt time
+      expect(alarm.triggeredAt).toBe(customTriggerTime);
+      expect(alarm.isAcknowledged).toBe(false);
+      expect(alarm.entries).toEqual([]);
+    });
+
+    it('should create alarm with custom acknowledgment state', () => {
+      // Given: alarm properties with custom acknowledgment state
+      const name = AlarmName.from('Acknowledged Alarm');
+      const severity = AlarmSeverity.from('medium');
+      const isAcknowledged = true;
+
+      // When: creating an alarm with custom acknowledgment state
+      const alarm = alarmFactory.create({ name, severity, isAcknowledged });
+
+      // Then: it should use the custom acknowledgment state
+      expect(alarm.isAcknowledged).toBe(true);
+      expect(alarm.triggeredAt).toBeInstanceOf(Date);
+      expect(alarm.entries).toEqual([]);
+    });
+
+    it('should create alarm with custom entries', () => {
+      // Given: alarm properties with custom entries
+      const name = AlarmName.from('Alarm with Entries');
+      const severity = AlarmSeverity.from('critical');
+      const entry1 = AlarmEntry.create({
+        id: AlarmEntryId.from(commonFixtures.validId()),
+        name: AlarmEntryName.from('Database Connection Failed'),
+        type: AlarmEntryType.from('database'),
+        createdAt: commonFixtures.currentDateTime,
+        updatedAt: commonFixtures.currentDateTime,
+      });
+      const entry2 = AlarmEntry.create({
+        id: AlarmEntryId.from(commonFixtures.validId()),
+        name: AlarmEntryName.from('Network Timeout'),
+        type: AlarmEntryType.from('network'),
+        createdAt: commonFixtures.currentDateTime,
+        updatedAt: commonFixtures.currentDateTime,
+      });
+      const entries = [entry1, entry2];
+
+      // When: creating an alarm with custom entries
+      const alarm = alarmFactory.create({ name, severity, entries });
+
+      // Then: it should use the custom entries
+      expect(alarm.entries).toHaveLength(2);
+      expect(alarm.entries[0]).toBe(entry1);
+      expect(alarm.entries[1]).toBe(entry2);
+      expect(alarm.triggeredAt).toBeInstanceOf(Date);
+      expect(alarm.isAcknowledged).toBe(false);
+    });
+
+    it('should create alarm with all custom properties', () => {
+      // Given: alarm properties with all custom values
+      const name = AlarmName.from('Fully Custom Alarm');
+      const severity = AlarmSeverity.from('low');
+      const customTriggerTime = new Date('2024-01-15T14:30:00.000Z');
+      const isAcknowledged = true;
+      const entry = AlarmEntry.create({
+        id: AlarmEntryId.from(commonFixtures.validId()),
+        name: AlarmEntryName.from('Custom Entry'),
+        type: AlarmEntryType.from('application'),
+        createdAt: commonFixtures.currentDateTime,
+        updatedAt: commonFixtures.currentDateTime,
+      });
+      const entries = [entry];
+
+      // When: creating an alarm with all custom properties
+      const alarm = alarmFactory.create({
+        name,
+        severity,
+        triggeredAt: customTriggerTime,
+        isAcknowledged,
+        entries,
+      });
+
+      // Then: it should use all custom properties
+      expect(alarm.name).toBe(name);
+      expect(alarm.severity).toBe(severity);
+      expect(alarm.triggeredAt).toBe(customTriggerTime);
+      expect(alarm.isAcknowledged).toBe(true);
+      expect(alarm.entries).toHaveLength(1);
+      expect(alarm.entries[0]).toBe(entry);
+      expect(alarm.createdAt).toBeInstanceOf(Date);
+      expect(alarm.updatedAt).toBeInstanceOf(Date);
+    });
+
+    it('should use default values when optional properties are not provided', () => {
+      // Given: alarm properties with only required fields
+      const name = AlarmName.from('Default Values Test');
+      const severity = AlarmSeverity.from('high');
+
+      // When: creating an alarm without optional properties
+      const alarm = alarmFactory.create({ name, severity });
+
+      // Then: it should use default values for optional properties
+      expect(alarm.triggeredAt).toBeInstanceOf(Date);
+      expect(alarm.isAcknowledged).toBe(false);
+      expect(alarm.entries).toEqual([]);
+
+      // Verify the triggeredAt is set to current time (within reasonable range)
+      const now = new Date();
+      const timeDiff = Math.abs(alarm.triggeredAt.getTime() - now.getTime());
+      expect(timeDiff).toBeLessThan(1000); // Within 1 second
     });
   });
 
