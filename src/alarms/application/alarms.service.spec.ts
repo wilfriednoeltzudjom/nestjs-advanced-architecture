@@ -147,10 +147,10 @@ describe('Service: AlarmsService', () => {
       expect(result).toHaveLength(2);
       expect(result[0]).toBeInstanceOf(Alarm);
       expect(result[1]).toBeInstanceOf(Alarm);
-      expect(result[0].name.value).toBe('Critical Alert');
-      expect(result[1].name.value).toBe('Low Priority Alert');
-      expect(result[0].severity.value).toBe('critical');
-      expect(result[1].severity.value).toBe('low');
+      expect(result[0].name).toBe('Critical Alert');
+      expect(result[1].name).toBe('Low Priority Alert');
+      expect(result[0].severity).toBe('critical');
+      expect(result[1].severity).toBe('low');
       expect(globalMocks.queryBus.execute).toHaveBeenCalledWith(query);
     });
   });

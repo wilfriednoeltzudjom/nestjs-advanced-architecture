@@ -44,7 +44,7 @@ export class KyselyAlarmRepository implements AlarmRepository {
   }
 
   async create(alarm: Alarm): Promise<Alarm> {
-    return this.db.transaction().execute(async (trx) => {
+    const persistedAlarm = await this.db.transaction().execute(async (trx) => {
       // Insert the alarm
       const alarmResult = await trx
         .insertInto(this.tableName)
@@ -60,16 +60,15 @@ export class KyselyAlarmRepository implements AlarmRepository {
         await trx.insertInto('alarm_entries').values(entryData).execute();
       }
 
-      // Return the alarm with entries loaded from the repository
       // Note: We'll load entries after the transaction commits to ensure consistency
-      const alarmEntity = AlarmMapper.forDomain(createdAlarm);
-      const entries = await this.alarmEntryRepository.findByAlarmId(createdAlarm.id);
-
-      return Alarm.hydrate({
-        ...alarmEntity.toPrimitives(),
-        entries: entries.map((entry) => entry.toPrimitives()),
-      });
+      return AlarmMapper.forDomain(createdAlarm);
     });
+
+    // Load alarm entries
+    persistedAlarm.entries = await this.alarmEntryRepository.findByAlarmId(persistedAlarm.id.value);
+
+    // Return the alarm with entries loaded from the repository
+    return persistedAlarm;
   }
 
   async findByName(name: AlarmName): Promise<Alarm | null> {

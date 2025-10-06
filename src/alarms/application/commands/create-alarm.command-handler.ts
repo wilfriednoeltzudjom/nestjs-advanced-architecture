@@ -28,8 +28,6 @@ export class CreateAlarmCommandHandler implements ICommandHandler<CreateAlarmCom
   }
 
   async execute(createAlarmCommand: CreateAlarmCommand): Promise<Alarm> {
-    this.logger.debug('Processing "CreateAlarmCommand"', createAlarmCommand);
-
     const createAlarmProps: CreateAlarmProps = {
       name: AlarmName.from(createAlarmCommand.name),
       severity: AlarmSeverity.from(createAlarmCommand.severity),
@@ -45,6 +43,7 @@ export class CreateAlarmCommandHandler implements ICommandHandler<CreateAlarmCom
     }
 
     const alarm = this.alarmFactory.create(createAlarmProps);
+
     const persistedAlarm = await this.alarmRepository.create(alarm);
 
     // Dispatch event

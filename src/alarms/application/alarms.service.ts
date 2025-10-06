@@ -4,6 +4,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateAlarmCommand } from '@/alarms/application/commands/create-alarm.command';
 import { GetAlarmsQuery } from '@/alarms/application/queries/get-alarms.query';
 import { Alarm } from '@/alarms/domain/entities/alarm.entity';
+import { AlarmReadModel } from '@/alarms/domain/read-models/alarm.read-model';
 import { Logger } from '@/shared/application/contracts/logger.contract';
 import { InjectLogger } from '@/shared/infrastructure/logger/logger.decorators';
 
@@ -21,7 +22,7 @@ export class AlarmsService {
     return this.commandBus.execute(createAlarmCommand);
   }
 
-  findAll(getAlarmsQuery: GetAlarmsQuery): Promise<Alarm[]> {
+  findAll(getAlarmsQuery: GetAlarmsQuery): Promise<AlarmReadModel[]> {
     return this.queryBus.execute(getAlarmsQuery);
   }
 }

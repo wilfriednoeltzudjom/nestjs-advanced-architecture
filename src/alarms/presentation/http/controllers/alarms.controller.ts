@@ -11,15 +11,20 @@ export class AlarmsController {
 
   @Post()
   async create(@Body() createAlarmDto: CreateAlarmDto) {
-    const alarm = await this.alarmsService.create(new CreateAlarmCommand(createAlarmDto.name, createAlarmDto.severity));
+    const alarm = await this.alarmsService.create(
+      new CreateAlarmCommand(
+        createAlarmDto.name,
+        createAlarmDto.severity,
+        createAlarmDto.triggeredAt,
+        createAlarmDto.entries,
+      ),
+    );
 
     return alarm.toPrimitives();
   }
 
   @Get()
   async findAll() {
-    const alarms = await this.alarmsService.findAll(new GetAlarmsQuery());
-
-    return alarms.map((alarm) => alarm.toPrimitives());
+    return this.alarmsService.findAll(new GetAlarmsQuery());
   }
 }
