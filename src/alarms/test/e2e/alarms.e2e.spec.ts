@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { INestApplication } from '@nestjs/common';
 
-import { Alarm } from '@/alarms/domain/entities/alarm.entity';
+import { AlarmReadModel } from '@/alarms/domain/read-models/alarm.read-model';
 import { E2ETestHelper } from '@/test/helpers/e2e-test.helper';
 
 describe('Controller e2e: AlarmsController', () => {
@@ -142,7 +142,7 @@ describe('Controller e2e: AlarmsController', () => {
       // Create alarms
       await Promise.all(
         alarms.map((alarm) => {
-          return e2eTestHelper.getAlarmSeeder().seedAlarm(alarm) as Promise<Alarm>;
+          return e2eTestHelper.getAlarmSeeder().seedAlarm(alarm);
         }),
       );
 
@@ -152,13 +152,13 @@ describe('Controller e2e: AlarmsController', () => {
       // Then: should return all created alarms
       expect(response.body).toHaveLength(3);
 
-      const alarmNames = response.body.map((alarm: any) => alarm.name as string);
+      const alarmNames = response.body.map((alarm: AlarmReadModel) => alarm.name);
       expect(alarmNames).toContain('First Alarm');
       expect(alarmNames).toContain('Second Alarm');
       expect(alarmNames).toContain('Third Alarm');
 
       // Verify each alarm has required properties
-      response.body.forEach((alarm: any) => {
+      response.body.forEach((alarm: AlarmReadModel) => {
         expect(alarm).toHaveProperty('id');
         expect(alarm).toHaveProperty('name');
         expect(alarm).toHaveProperty('severity');
