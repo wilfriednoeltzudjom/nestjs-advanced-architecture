@@ -36,7 +36,7 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # IDE - Cursor
-.cursor/
+.cursor/*
 
 # dotenv environment variable files
 .env
